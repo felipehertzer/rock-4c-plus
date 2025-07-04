@@ -1,19 +1,20 @@
-name: Build image for Release channel
+name: Build image for Test channel
 on:
   workflow_dispatch:
-
 jobs:
   prepare_release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Create empty release
         id: release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: b${{ github.run_number }}
-          body_path: README.md
+          tag_name: test-build-${{ github.run_number }}
+          body: |
+            This is a test build for internal development.
+            Only use when specifically instructed by Radxa support.
           token: ${{ secrets.GITHUB_TOKEN }}
           target_commitish: main
           draft: false
@@ -46,7 +47,7 @@ jobs:
             flavors: xfce
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Upload Armbian image
         uses: radxa/armbian-compile-action@main
         if: matrix.build_systems == 'armbian'
@@ -74,6 +75,8 @@ jobs:
           flavor: ${{ matrix.flavors }}
           release-id: ${{ needs.prepare_release.outputs.release_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          test-repo: true
+          timestamp: t${{ github.run_number }}
       - name: Upload rbuild legacy image
         uses: radxa-repo/rbuild@main
         if: matrix.build_systems == 'rbuild' && matrix.distros == 'focal'
@@ -83,3 +86,5 @@ jobs:
           flavor: ${{ matrix.flavors }}
           release-id: ${{ needs.prepare_release.outputs.release_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          test-repo: true
+          timestamp: t${{ github.run_number }}
