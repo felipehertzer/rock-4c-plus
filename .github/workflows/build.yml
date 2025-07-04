@@ -1,4 +1,4 @@
-name: Build image for Test channel
+name: Build image for Release channel
 on:
   workflow_dispatch:
 jobs:
@@ -11,10 +11,8 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: test-build-${{ github.run_number }}
-          body: |
-            This is a test build for internal development.
-            Only use when specifically instructed by Radxa support.
+          tag_name: b${{ github.run_number }}
+          body_path: README.md
           token: ${{ secrets.GITHUB_TOKEN }}
           target_commitish: main
           draft: false
@@ -49,7 +47,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Upload Armbian image
-        uses: radxa/armbian-compile-action@main
+        uses: felipehertzer/armbian-compile-action@main
         if: matrix.build_systems == 'armbian'
         with:
           board: rockpi-4cplus
@@ -75,8 +73,6 @@ jobs:
           flavor: ${{ matrix.flavors }}
           release-id: ${{ needs.prepare_release.outputs.release_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-repo: true
-          timestamp: t${{ github.run_number }}
       - name: Upload rbuild legacy image
         uses: radxa-repo/rbuild@main
         if: matrix.build_systems == 'rbuild' && matrix.distros == 'focal'
@@ -86,5 +82,3 @@ jobs:
           flavor: ${{ matrix.flavors }}
           release-id: ${{ needs.prepare_release.outputs.release_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-repo: true
-          timestamp: t${{ github.run_number }}
