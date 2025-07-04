@@ -56,7 +56,7 @@ jobs:
           release-id: ${{ needs.prepare_release.outputs.release_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload debos-radxa image
-        uses: radxa/debos-build-action@main
+        uses: felipehertzer/debos-build-action@main
         if: matrix.build_systems == 'debos'
         with:
           board: ${{ matrix.boards }}
