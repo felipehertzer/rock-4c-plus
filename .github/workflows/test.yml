@@ -1,13 +1,12 @@
 name: Build image for Test channel
 on:
   workflow_dispatch:
-
 jobs:
   prepare_release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Create empty release
         id: release
         uses: softprops/action-gh-release@v1
@@ -48,9 +47,9 @@ jobs:
             flavors: xfce
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Upload Armbian image
-        uses: radxa/armbian-compile-action@main
+        uses: felipehertzer/armbian-compile-action@main
         if: matrix.build_systems == 'armbian'
         with:
           board: rockpi-4cplus
